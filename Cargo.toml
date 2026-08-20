@@ -71,3 +71,14 @@ strip = true
 
 [profile.dev]
 opt-level = 1
+
+[package.metadata.deb]
+name = "supernova-engine"
+maintainer = "Aurora Studios Team <aurora-studios-games-team@theheadoffice.org.nz>"
+copyright = "2026, Aurora Studios"
+license-file = ["LICENSE", "4"]
+summary = "The Amazing Supernova 2D/3D Game Engine!"
+description = "A cutting-edge modular engine supporting native and WASM builds."
+assets = [
+    ["target/x86_64-unknown-linux-gnu/release/supernova_engine", "usr/bin/supernova_engine", "755"],
+]
