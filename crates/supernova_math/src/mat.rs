@@ -1,6 +1,6 @@
 //! Matrix utilities and extensions.
 
-use glam::{Mat3, Mat4, Vec3, Quat};
+use glam::{Mat3, Mat4, Quat, Vec3};
 
 /// Matrix extension methods.
 pub trait Mat4Ext {
@@ -46,11 +46,8 @@ impl Mat4Ext for Mat4 {
             self.z_axis.length(),
         );
         let translation = self.w_axis.truncate();
-        let rot_mat = Mat3::from_mat4(self) * Mat3::from_diagonal(Vec3::new(
-            1.0 / scale.x,
-            1.0 / scale.y,
-            1.0 / scale.z,
-        ));
+        let rot_mat = Mat3::from_mat4(self)
+            * Mat3::from_diagonal(Vec3::new(1.0 / scale.x, 1.0 / scale.y, 1.0 / scale.z));
         let rotation = Quat::from_mat3(&rot_mat);
         (translation, rotation, scale)
     }

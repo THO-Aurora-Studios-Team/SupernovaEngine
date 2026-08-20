@@ -56,7 +56,10 @@ pub struct Children {
 
 impl Default for Children {
     fn default() -> Self {
-        Self { parent: 0, children: Vec::new() }
+        Self {
+            parent: 0,
+            children: Vec::new(),
+        }
     }
 }
 

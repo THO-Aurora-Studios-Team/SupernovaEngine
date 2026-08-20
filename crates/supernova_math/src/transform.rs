@@ -1,8 +1,8 @@
 //! Transform — position, rotation, scale for 2D and 3D.
 
+use crate::quat::QuatExt;
 use glam::{Mat4, Quat, Vec2, Vec3};
 use serde::{Deserialize, Serialize};
-use crate::quat::QuatExt;
 
 /// 3D transform with TRS (translation, rotation, scale).
 #[derive(Clone, Copy, Debug, Serialize, Deserialize)]
@@ -21,22 +21,35 @@ impl Transform {
 
     #[inline]
     pub fn new(position: Vec3, rotation: Quat, scale: Vec3) -> Self {
-        Self { position, rotation, scale }
+        Self {
+            position,
+            rotation,
+            scale,
+        }
     }
 
     #[inline]
     pub fn from_position(position: Vec3) -> Self {
-        Self { position, ..Self::IDENTITY }
+        Self {
+            position,
+            ..Self::IDENTITY
+        }
     }
 
     #[inline]
     pub fn from_rotation(rotation: Quat) -> Self {
-        Self { rotation, ..Self::IDENTITY }
+        Self {
+            rotation,
+            ..Self::IDENTITY
+        }
     }
 
     #[inline]
     pub fn from_scale(scale: Vec3) -> Self {
-        Self { scale, ..Self::IDENTITY }
+        Self {
+            scale,
+            ..Self::IDENTITY
+        }
     }
 
     /// Compute the local-to-world matrix.
@@ -131,12 +144,19 @@ impl Transform2D {
 
     #[inline]
     pub fn new(position: Vec2, rotation: f32, scale: Vec2) -> Self {
-        Self { position, rotation, scale }
+        Self {
+            position,
+            rotation,
+            scale,
+        }
     }
 
     #[inline]
     pub fn from_position(position: Vec2) -> Self {
-        Self { position, ..Self::IDENTITY }
+        Self {
+            position,
+            ..Self::IDENTITY
+        }
     }
 
     /// Compute the local-to-world 3x3 matrix as a Mat4 (z = 0 plane).

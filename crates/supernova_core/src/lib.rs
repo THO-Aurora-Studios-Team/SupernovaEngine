@@ -4,27 +4,27 @@
 //! sparse-set, giving O(1) insertion/removal and excellent iteration speed
 //! with dense, contiguous arrays for cache-friendly queries.
 
-pub mod entity;
-pub mod world;
+pub mod app;
 pub mod component;
-pub mod query;
-pub mod system;
+pub mod entity;
 pub mod event;
+pub mod query;
 pub mod resource;
 pub mod schedule;
-pub mod app;
+pub mod system;
 pub mod time;
+pub mod world;
 
-pub use entity::{Entity, EntityIndex};
-pub use world::World;
+pub use app::App;
 pub use component::Component;
-pub use query::{Query, QueryIter, QueryMutIter, QueryBorrow};
-pub use system::{System, IntoSystem, FnSystem};
+pub use entity::{Entity, EntityIndex};
 pub use event::{EventReader, EventWriter, Events};
+pub use query::{Query, QueryBorrow, QueryIter, QueryMutIter};
 pub use resource::Resource;
 pub use schedule::{Schedule, SystemSet};
-pub use app::App;
+pub use system::{FnSystem, IntoSystem, System};
 pub use time::Time;
+pub use world::World;
 
 /// Global entity-id type used throughout the engine.
 pub use entity::Entity as EcsEntity;

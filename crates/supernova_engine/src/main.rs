@@ -17,9 +17,7 @@ fn main() {
     // Create a demo scene
     {
         let world = engine.world_mut();
-        let _player = world.spawn_with((
-            Transform::from_position(Vec3::new(0.0, 0.0, 0.0)),
-        ));
+        let _player = world.spawn_with((Transform::from_position(Vec3::new(0.0, 0.0, 0.0)),));
     }
 
     println!("Engine initialized successfully.");

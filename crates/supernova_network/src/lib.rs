@@ -79,10 +79,18 @@ impl std::fmt::Display for NetworkError {
             NetworkError::NetworkUnreachable(msg) => write!(f, "Network unreachable: {}", msg),
             NetworkError::HostUnreachable(msg) => write!(f, "Host unreachable: {}", msg),
             NetworkError::ConnectionInProgress(msg) => write!(f, "Connection in progress: {}", msg),
-            NetworkError::ConnectionResetByPeer(msg) => write!(f, "Connection reset by peer: {}", msg),
-            NetworkError::ConnectionAbortedByLocal(msg) => write!(f, "Connection aborted by local: {}", msg),
-            NetworkError::ConnectionRefusedByPeer(msg) => write!(f, "Connection refused by peer: {}", msg),
-            NetworkError::ConnectionTimeoutByPeer(msg) => write!(f, "Connection timeout by peer: {}", msg),
+            NetworkError::ConnectionResetByPeer(msg) => {
+                write!(f, "Connection reset by peer: {}", msg)
+            }
+            NetworkError::ConnectionAbortedByLocal(msg) => {
+                write!(f, "Connection aborted by local: {}", msg)
+            }
+            NetworkError::ConnectionRefusedByPeer(msg) => {
+                write!(f, "Connection refused by peer: {}", msg)
+            }
+            NetworkError::ConnectionTimeoutByPeer(msg) => {
+                write!(f, "Connection timeout by peer: {}", msg)
+            }
             NetworkError::Unknown(msg) => write!(f, "Unknown error: {}", msg),
         }
     }
@@ -117,13 +125,13 @@ impl NetAddress {
         let ip_str = parts[0];
         let port_str = parts[1];
 
-        let ip: IpAddr = ip_str.parse().map_err(|_| {
-            NetworkError::InvalidAddress(format!("Invalid IP address: {}", ip_str))
-        })?;
+        let ip: IpAddr = ip_str
+            .parse()
+            .map_err(|_| NetworkError::InvalidAddress(format!("Invalid IP address: {}", ip_str)))?;
 
-        let port: u16 = port_str.parse().map_err(|_| {
-            NetworkError::InvalidAddress(format!("Invalid port: {}", port_str))
-        })?;
+        let port: u16 = port_str
+            .parse()
+            .map_err(|_| NetworkError::InvalidAddress(format!("Invalid port: {}", port_str)))?;
 
         Ok(Self::new(ip, port))
     }
@@ -420,9 +428,7 @@ impl Connection {
 
         let data_len = data.len();
         if data_len > self.available_recv() {
-            return Err(NetworkError::SendFailed(
-                "Send window full".to_string(),
-            ));
+            return Err(NetworkError::SendFailed("Send window full".to_string()));
         }
 
         self.send_buffer.extend_from_slice(data);

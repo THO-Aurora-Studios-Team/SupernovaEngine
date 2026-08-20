@@ -4,8 +4,8 @@ use std::any::{Any, TypeId};
 
 use ahash::AHashMap;
 
-use crate::entity::{Entity, EntityIndex};
 use crate::component::ComponentStorage;
+use crate::entity::{Entity, EntityIndex};
 use crate::event::Events;
 use crate::Resource;
 
@@ -116,7 +116,9 @@ impl World {
     /// Get or create the storage for component type `T`.
     fn storage<T: crate::Component>(&mut self) -> &mut ComponentStorage {
         let type_id = TypeId::of::<T>();
-        self.component_type_names.entry(type_id).or_insert_with(|| std::any::type_name::<T>());
+        self.component_type_names
+            .entry(type_id)
+            .or_insert_with(|| std::any::type_name::<T>());
         self.component_storages
             .entry(type_id)
             .or_insert_with(|| Box::new(ComponentStorage::new::<T>()))
@@ -164,12 +166,16 @@ impl World {
 
     /// Get the raw storage for component `T`.
     pub fn storage_ref<T: crate::Component>(&self) -> Option<&ComponentStorage> {
-        self.component_storages.get(&TypeId::of::<T>()).map(|v| v.as_ref())
+        self.component_storages
+            .get(&TypeId::of::<T>())
+            .map(|v| v.as_ref())
     }
 
     /// Get the raw mutable storage for component `T`.
     pub fn storage_mut<T: crate::Component>(&mut self) -> Option<&mut ComponentStorage> {
-        self.component_storages.get_mut(&TypeId::of::<T>()).map(|v| v.as_mut())
+        self.component_storages
+            .get_mut(&TypeId::of::<T>())
+            .map(|v| v.as_mut())
     }
 
     /// Number of distinct component types currently registered.
@@ -224,10 +230,7 @@ impl World {
             .events
             .entry(type_id)
             .or_insert_with(|| Box::new(Events::<E>::new()));
-        events
-            .downcast_mut::<Events<E>>()
-            .unwrap()
-            .send(event);
+        events.downcast_mut::<Events<E>>().unwrap().send(event);
     }
 
     /// Get the event buffer for event type `E`.
@@ -289,10 +292,7 @@ impl World {
 
     /// Total number of components across all types.
     pub fn total_components(&self) -> usize {
-        self.component_storages
-            .values()
-            .map(|s| s.len())
-            .sum()
+        self.component_storages.values().map(|s| s.len()).sum()
     }
 }
 

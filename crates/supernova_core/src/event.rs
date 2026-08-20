@@ -130,10 +130,7 @@ impl<E: Event> EventReader<E> {
 
     /// Read events from both current and previous frame (useful for
     /// catching events even if a system runs late).
-    pub fn read_with_previous<'w>(
-        &mut self,
-        events: &'w Events<E>,
-    ) -> impl Iterator<Item = &'w E> {
+    pub fn read_with_previous<'w>(&mut self, events: &'w Events<E>) -> impl Iterator<Item = &'w E> {
         let count = events.len();
         let start = self.cursor.min(count);
         self.cursor = count;

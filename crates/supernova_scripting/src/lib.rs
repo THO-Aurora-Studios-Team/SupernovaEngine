@@ -53,7 +53,9 @@ pub trait Script: Send + Sync {
     fn on_init(&mut self) {}
     fn on_update(&mut self, delta_time: f32) {}
     fn on_destroy(&mut self) {}
-    fn language(&self) -> ScriptLanguage { ScriptLanguage::Lua }
+    fn language(&self) -> ScriptLanguage {
+        ScriptLanguage::Lua
+    }
 }
 
 /// Lua/Luau script implementation
@@ -237,7 +239,11 @@ pub struct ScriptInstance {
 
 impl ScriptInstance {
     pub fn new(script: Box<dyn Script>, entity: EntityHandle, handle: ScriptHandle) -> Self {
-        Self { script, entity, handle }
+        Self {
+            script,
+            entity,
+            handle,
+        }
     }
 
     pub fn initialize(&mut self) {

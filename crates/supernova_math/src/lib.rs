@@ -4,23 +4,23 @@
 //! with a clean, ergonomic API. All types are `#[repr(C)]` and `Pod` for
 //! direct GPU upload.
 
-pub mod vec;
+pub mod aabb;
+pub mod color;
 pub mod mat;
 pub mod quat;
-pub mod color;
-pub mod aabb;
 pub mod transform;
+pub mod vec;
 
-pub use vec::*;
+pub use aabb::*;
+pub use color::*;
 pub use mat::*;
 pub use quat::*;
-pub use color::*;
-pub use aabb::*;
 pub use transform::*;
+pub use vec::*;
 
 // Re-export glam primitives for convenience
 pub use glam::{
-    Vec2, Vec3, Vec4, Mat2, Mat3, Mat4, Quat, Vec3A, IVec2, IVec3, IVec4, UVec2, UVec3, UVec4,
+    IVec2, IVec3, IVec4, Mat2, Mat3, Mat4, Quat, UVec2, UVec3, UVec4, Vec2, Vec3, Vec3A, Vec4,
 };
 
 /// Constant: π

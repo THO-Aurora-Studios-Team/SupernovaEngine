@@ -105,8 +105,7 @@ impl AssetManager {
             return Ok(*handle);
         }
 
-        let data = std::fs::read(&path)
-            .map_err(|e| AssetError::IOError(e.to_string()))?;
+        let data = std::fs::read(&path).map_err(|e| AssetError::IOError(e.to_string()))?;
 
         let handle = self.next_handle();
         let entry = AssetEntry {
@@ -133,13 +132,16 @@ impl AssetManager {
     }
 
     /// Get raw asset data by handle.
-    pub fn get_raw(&self, handle: AssetHandle) -> Option<Arc<RwLock<Vec<u8>>> > {
+    pub fn get_raw(&self, handle: AssetHandle) -> Option<Arc<RwLock<Vec<u8>>>> {
         self.assets.get(&handle).map(|e| e.data.clone())
     }
 
     /// Deserialize an asset from raw data.
     pub fn get<T: FromBytes>(&self, handle: AssetHandle) -> Result<T, AssetError> {
-        let entry = self.assets.get(&handle).ok_or(AssetError::NotFound("Handle not found".into()))?;
+        let entry = self
+            .assets
+            .get(&handle)
+            .ok_or(AssetError::NotFound("Handle not found".into()))?;
         let data = entry.data.read().unwrap();
         T::from_bytes(&data)
     }
@@ -147,8 +149,7 @@ impl AssetManager {
     /// Save asset data to a file.
     pub fn save<P: AsRef<Path>>(&mut self, path: P, data: &[u8]) -> Result<(), AssetError> {
         let path = path.as_ref().to_path_buf();
-        std::fs::write(&path, data)
-            .map_err(|e| AssetError::IOError(e.to_string()))?;
+        std::fs::write(&path, data).map_err(|e| AssetError::IOError(e.to_string()))?;
 
         let handle = self.next_handle();
         let entry = AssetEntry {
@@ -195,8 +196,8 @@ impl AssetManager {
                 .unwrap_or(std::time::SystemTime::now());
 
             if new_modified > entry.modified {
-                let data = std::fs::read(&entry.path)
-                    .map_err(|e| AssetError::IOError(e.to_string()))?;
+                let data =
+                    std::fs::read(&entry.path).map_err(|e| AssetError::IOError(e.to_string()))?;
 
                 let mut write = entry.data.write().unwrap();
                 write.clear();

@@ -40,14 +40,17 @@ impl<'w, T: Component> Iterator for QueryIter<'w, T> {
     }
 
     fn size_hint(&self) -> (usize, Option<usize>) {
-        let remaining = self.storage.map_or(0, |s| s.len().saturating_sub(self.index));
+        let remaining = self
+            .storage
+            .map_or(0, |s| s.len().saturating_sub(self.index));
         (remaining, Some(remaining))
     }
 }
 
 impl<'w, T: Component> ExactSizeIterator for QueryIter<'w, T> {
     fn len(&self) -> usize {
-        self.storage.map_or(0, |s| s.len().saturating_sub(self.index))
+        self.storage
+            .map_or(0, |s| s.len().saturating_sub(self.index))
     }
 }
 

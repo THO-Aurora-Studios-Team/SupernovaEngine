@@ -1,7 +1,7 @@
 //! Axis-Aligned Bounding Box — 2D and 3D variants.
 
-use glam::{Vec2, Vec3};
 use crate::vec::{Vec2Ext, Vec3Ext};
+use glam::{Vec2, Vec3};
 
 /// 2D AABB.
 #[derive(Clone, Copy, Debug, PartialEq)]
@@ -24,7 +24,10 @@ impl Aabb2 {
     #[inline]
     pub fn from_center_size(center: Vec2, size: Vec2) -> Self {
         let half = size * 0.5;
-        Self { min: center - half, max: center + half }
+        Self {
+            min: center - half,
+            max: center + half,
+        }
     }
 
     #[inline]
@@ -79,7 +82,10 @@ impl Aabb2 {
 
     #[inline]
     pub fn translate(self, by: Vec2) -> Self {
-        Self { min: self.min + by, max: self.max + by }
+        Self {
+            min: self.min + by,
+            max: self.max + by,
+        }
     }
 }
 
@@ -104,7 +110,10 @@ impl Aabb3 {
     #[inline]
     pub fn from_center_size(center: Vec3, size: Vec3) -> Self {
         let half = size * 0.5;
-        Self { min: center - half, max: center + half }
+        Self {
+            min: center - half,
+            max: center + half,
+        }
     }
 
     #[inline]
@@ -124,9 +133,12 @@ impl Aabb3 {
 
     #[inline]
     pub fn contains(self, p: Vec3) -> bool {
-        p.x >= self.min.x && p.x <= self.max.x
-            && p.y >= self.min.y && p.y <= self.max.y
-            && p.z >= self.min.z && p.z <= self.max.z
+        p.x >= self.min.x
+            && p.x <= self.max.x
+            && p.y >= self.min.y
+            && p.y <= self.max.y
+            && p.z >= self.min.z
+            && p.z <= self.max.z
     }
 
     #[inline]
@@ -163,7 +175,10 @@ impl Aabb3 {
 
     #[inline]
     pub fn translate(self, by: Vec3) -> Self {
-        Self { min: self.min + by, max: self.max + by }
+        Self {
+            min: self.min + by,
+            max: self.max + by,
+        }
     }
 
     /// Closest point on the AABB to `p`.

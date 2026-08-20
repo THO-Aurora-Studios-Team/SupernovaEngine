@@ -25,9 +25,9 @@ impl<T: 'static + Send + Sync> Component for T {}
 ///
 /// This gives O(1) lookup by entity and very fast linear iteration.
 pub struct ComponentStorage {
-    sparse: Vec<u32>,       // indexed by EntityIndex
-    dense: Vec<Entity>,     // entities that have this component
-    data: NonNull<u8>,      // raw component data buffer
+    sparse: Vec<u32>,   // indexed by EntityIndex
+    dense: Vec<Entity>, // entities that have this component
+    data: NonNull<u8>,  // raw component data buffer
     len: usize,
     cap: usize,
     layout: Layout,
@@ -82,10 +82,8 @@ impl ComponentStorage {
         }
         let new_cap = new_cap.max(8).max(self.cap * 2);
         unsafe {
-            let new_layout = Layout::from_size_align_unchecked(
-                new_cap * self.item_size,
-                self.layout.align(),
-            );
+            let new_layout =
+                Layout::from_size_align_unchecked(new_cap * self.item_size, self.layout.align());
             let new_ptr = if self.cap == 0 {
                 alloc::alloc(new_layout)
             } else {

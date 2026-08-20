@@ -19,13 +19,13 @@ impl Color {
         Self { r, g, b, a }
     }
 
-    pub const WHITE:   Self = Self::rgb(1.0, 1.0, 1.0);
-    pub const BLACK:   Self = Self::rgb(0.0, 0.0, 0.0);
-    pub const RED:     Self = Self::rgb(1.0, 0.0, 0.0);
-    pub const GREEN:   Self = Self::rgb(0.0, 1.0, 0.0);
-    pub const BLUE:    Self = Self::rgb(0.0, 0.0, 1.0);
-    pub const YELLOW:  Self = Self::rgb(1.0, 1.0, 0.0);
-    pub const CYAN:    Self = Self::rgb(0.0, 1.0, 1.0);
+    pub const WHITE: Self = Self::rgb(1.0, 1.0, 1.0);
+    pub const BLACK: Self = Self::rgb(0.0, 0.0, 0.0);
+    pub const RED: Self = Self::rgb(1.0, 0.0, 0.0);
+    pub const GREEN: Self = Self::rgb(0.0, 1.0, 0.0);
+    pub const BLUE: Self = Self::rgb(0.0, 0.0, 1.0);
+    pub const YELLOW: Self = Self::rgb(1.0, 1.0, 0.0);
+    pub const CYAN: Self = Self::rgb(0.0, 1.0, 1.0);
     pub const MAGENTA: Self = Self::rgb(1.0, 0.0, 1.0);
     pub const TRANSPARENT: Self = Self::rgba(0.0, 0.0, 0.0, 0.0);
 
@@ -140,19 +140,37 @@ impl Color {
         if s == 0.0 {
             return Self::rgb(l, l, l);
         }
-        let q = if l < 0.5 { l * (1.0 + s) } else { l + s - l * s };
+        let q = if l < 0.5 {
+            l * (1.0 + s)
+        } else {
+            l + s - l * s
+        };
         let p = 2.0 * l - q;
         let h = h.rem_euclid(360.0) / 360.0;
         fn hue(p: f32, q: f32, t: f32) -> f32 {
             let mut t = t;
-            if t < 0.0 { t += 1.0; }
-            if t > 1.0 { t -= 1.0; }
-            if t < 1.0 / 6.0 { return p + (q - p) * 6.0 * t; }
-            if t < 1.0 / 2.0 { return q; }
-            if t < 2.0 / 3.0 { return p + (q - p) * (2.0 / 3.0 - t) * 6.0; }
+            if t < 0.0 {
+                t += 1.0;
+            }
+            if t > 1.0 {
+                t -= 1.0;
+            }
+            if t < 1.0 / 6.0 {
+                return p + (q - p) * 6.0 * t;
+            }
+            if t < 1.0 / 2.0 {
+                return q;
+            }
+            if t < 2.0 / 3.0 {
+                return p + (q - p) * (2.0 / 3.0 - t) * 6.0;
+            }
             p
         }
-        Self::rgb(hue(p, q, h + 1.0 / 3.0), hue(p, q, h), hue(p, q, h - 1.0 / 3.0))
+        Self::rgb(
+            hue(p, q, h + 1.0 / 3.0),
+            hue(p, q, h),
+            hue(p, q, h - 1.0 / 3.0),
+        )
     }
 
     /// As a float array [r, g, b, a].

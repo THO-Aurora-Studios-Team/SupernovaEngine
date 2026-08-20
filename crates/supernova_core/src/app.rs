@@ -1,9 +1,9 @@
 //! App — the top-level engine builder and runner.
 
-use crate::world::World;
 use crate::schedule::Schedule;
 use crate::system::System;
 use crate::time::Time;
+use crate::world::World;
 
 /// The application — holds the world, schedule, and configuration.
 pub struct App {

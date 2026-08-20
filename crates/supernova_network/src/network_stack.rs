@@ -3,7 +3,7 @@
 use std::collections::HashMap;
 
 use crate::{NetAddress, NetworkError};
-use supernova_math::{Vec3, Quat};
+use supernova_math::{Quat, Vec3};
 
 pub mod exports {
     // Re-export key types for convenience
@@ -118,7 +118,7 @@ impl NetworkStack {
             rotation: Quat::IDENTITY,
         };
         self.clients.insert(address.clone(), client.clone());
-        
+
         self.events.push(NetworkEvent::ClientConnected(client));
         println!("Connected to server: {}", address);
         Ok(())
@@ -133,14 +133,22 @@ impl NetworkStack {
     }
 
     /// Send RPC to client
-    pub fn send_rpc(&mut self, client: &NetAddress, method: &str, args: &[u8]) -> Result<(), NetworkError> {
+    pub fn send_rpc(
+        &mut self,
+        client: &NetAddress,
+        method: &str,
+        args: &[u8],
+    ) -> Result<(), NetworkError> {
         // Find client
         if let Some(client_info) = self.clients.get_mut(client) {
             // In a real implementation, this would send RPC
             println!("Sent RPC to {}: {} ({} bytes)", client, method, args.len());
             Ok(())
         } else {
-            Err(NetworkError::NotConnected(format!("Client not found: {}", client)))
+            Err(NetworkError::NotConnected(format!(
+                "Client not found: {}",
+                client
+            )))
         }
     }
 
@@ -148,7 +156,7 @@ impl NetworkStack {
     pub fn broadcast_state(&mut self, state: GameState) {
         // In a real implementation, this would send state to all clients
         println!("Broadcasting state: {} bytes", state.data.len());
-        
+
         // Add to events
         self.events.push(NetworkEvent::GameStateUpdate(state));
     }
@@ -157,7 +165,7 @@ impl NetworkStack {
     pub fn broadcast_chat(&mut self, message: ChatMessage) {
         // In a real implementation, this would send chat message to all clients
         println!("Broadcasting chat: {}", message.content);
-        
+
         // Add to events
         self.events.push(NetworkEvent::ChatMessage(message));
     }
@@ -168,11 +176,11 @@ impl NetworkStack {
         for client in self.clients.values_mut() {
             // In a real implementation, this would update client state
             client.ping += dt as u32;
-            
+
             // Add update to events
             self.events.push(NetworkEvent::ClientUpdate(client.clone()));
         }
-        
+
         // Clear events
         self.events.clear();
     }

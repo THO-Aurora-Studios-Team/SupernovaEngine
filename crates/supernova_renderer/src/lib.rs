@@ -4,7 +4,7 @@
 //! rendering pipelines with proper depth testing, shader support, and
 //! material management.
 
-use supernova_math::{Vec2, Vec3, Quat, Mat4, Color};
+use supernova_math::{Color, Mat4, Quat, Vec2, Vec3};
 
 /// Vertex format enumeration
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -187,7 +187,14 @@ impl Light {
         }
     }
 
-    pub fn new_spot(position: Vec3, direction: Vec3, color: Color, intensity: f32, inner: f32, outer: f32) -> Self {
+    pub fn new_spot(
+        position: Vec3,
+        direction: Vec3,
+        color: Color,
+        intensity: f32,
+        inner: f32,
+        outer: f32,
+    ) -> Self {
         Self {
             light_type: LightType::Spot,
             position,
@@ -234,7 +241,11 @@ impl Camera {
     }
 
     pub fn view_matrix(&self) -> Mat4 {
-        Mat4::look_at_rh(self.position, self.position + self.rotation * Vec3::Z, Vec3::Y)
+        Mat4::look_at_rh(
+            self.position,
+            self.position + self.rotation * Vec3::Z,
+            Vec3::Y,
+        )
     }
 
     pub fn projection_matrix(&self) -> Mat4 {
@@ -245,7 +256,14 @@ impl Camera {
             CameraProjection::Orthographic => {
                 let half_width = self.aspect_ratio * self.far;
                 let half_height = self.far;
-                Mat4::orthographic_rh(-half_width, half_width, -half_height, half_height, self.near, self.far)
+                Mat4::orthographic_rh(
+                    -half_width,
+                    half_width,
+                    -half_height,
+                    half_height,
+                    self.near,
+                    self.far,
+                )
             }
         }
     }
@@ -440,23 +458,41 @@ pub struct VertexAttribute {
 /// Vertex attribute format
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum VertexAttributeFormat {
-    Float, Float2, Float3, Float4,
-    Int, Int2, Int3, Int4,
-    UInt, UInt2, UInt3, UInt4,
+    Float,
+    Float2,
+    Float3,
+    Float4,
+    Int,
+    Int2,
+    Int3,
+    Int4,
+    UInt,
+    UInt2,
+    UInt3,
+    UInt4,
 }
 
 /// Shader stage
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub enum ShaderStage {
-    Vertex, Fragment, Geometry, Compute,
-    Task, Mesh, All,
+    Vertex,
+    Fragment,
+    Geometry,
+    Compute,
+    Task,
+    Mesh,
+    All,
 }
 
 /// Primitive topology
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum PrimitiveTopology {
-    PointList, LineList, LineStrip,
-    TriangleList, TriangleStrip, TriangleFan,
+    PointList,
+    LineList,
+    LineStrip,
+    TriangleList,
+    TriangleStrip,
+    TriangleFan,
 }
 
 /// Depth/stencil state
@@ -478,8 +514,14 @@ impl Default for DepthStencilState {
 /// Compare function
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum CompareFunction {
-    Never, Less, Equal, LessEqual,
-    Greater, NotEqual, GreaterEqual, Always,
+    Never,
+    Less,
+    Equal,
+    LessEqual,
+    Greater,
+    NotEqual,
+    GreaterEqual,
+    Always,
 }
 
 /// Stencil state
@@ -505,9 +547,14 @@ impl Default for StencilState {
 /// Stencil operation
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum StencilOp {
-    Keep, Zero, Replace,
-    Increment, Decrement,
-    IncrementWrap, DecrementWrap, Invert,
+    Keep,
+    Zero,
+    Replace,
+    Increment,
+    Decrement,
+    IncrementWrap,
+    DecrementWrap,
+    Invert,
 }
 
 /// Bind group for shader resources
@@ -523,9 +570,17 @@ pub struct BindGroupEntry {
 
 /// Binding resource
 pub enum BindingResource {
-    Buffer { buffer: ResourceHandle, offset: u64, size: u64 },
-    TextureView { texture: ResourceHandle },
-    Sampler { sampler: ResourceHandle },
+    Buffer {
+        buffer: ResourceHandle,
+        offset: u64,
+        size: u64,
+    },
+    TextureView {
+        texture: ResourceHandle,
+    },
+    Sampler {
+        sampler: ResourceHandle,
+    },
 }
 
 /// Renderer struct — main rendering interface.

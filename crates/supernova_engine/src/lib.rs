@@ -2,28 +2,28 @@
 //!
 //! Aggregates all subsystem crates into a unified engine facade.
 
-pub use supernova_core as core;
-pub use supernova_math as math;
-pub use supernova_renderer as renderer;
-pub use supernova_physics as physics;
-pub use supernova_input as input;
-pub use supernova_audio as audio;
-pub use supernova_scene as scene;
 pub use supernova_assets as assets;
+pub use supernova_audio as audio;
+pub use supernova_core as core;
+pub use supernova_input as input;
+pub use supernova_math as math;
 pub use supernova_network as network;
-pub use supernova_scripting as scripting;
+pub use supernova_physics as physics;
 pub use supernova_plugin as plugin;
+pub use supernova_renderer as renderer;
+pub use supernova_scene as scene;
+pub use supernova_scripting as scripting;
 
-use supernova_core::App;
-use supernova_scene::SceneManager;
-use supernova_renderer::Renderer;
-use supernova_physics::PhysicsEngine;
-use supernova_input::InputHandler;
-use supernova_audio::AudioEngine;
 use supernova_assets::AssetManager;
+use supernova_audio::AudioEngine;
+use supernova_core::App;
+use supernova_input::InputHandler;
 use supernova_network::NetworkStack;
-use supernova_scripting::ScriptingEngine;
+use supernova_physics::PhysicsEngine;
 use supernova_plugin::PluginManager;
+use supernova_renderer::Renderer;
+use supernova_scene::SceneManager;
+use supernova_scripting::ScriptingEngine;
 
 /// Main engine structure that holds all subsystems.
 pub struct SupernovaEngine {

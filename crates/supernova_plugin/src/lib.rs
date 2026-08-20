@@ -17,8 +17,12 @@ pub trait Plugin: Send + Sync {
     fn initialize(&mut self, world: &mut supernova_core::World);
     fn shutdown(&mut self);
     fn update(&mut self, world: &mut supernova_core::World, delta_time: f32);
-    fn dependencies(&self) -> Vec<&str> { Vec::new() }
-    fn hot_reloadable(&self) -> bool { false }
+    fn dependencies(&self) -> Vec<&str> {
+        Vec::new()
+    }
+    fn hot_reloadable(&self) -> bool {
+        false
+    }
 }
 
 /// Plugin manager for loading and managing plugins.
@@ -80,7 +84,9 @@ impl PluginManager {
     }
 
     pub fn get_plugin_mut<'a>(&'a mut self, name: &str) -> Option<&'a mut dyn Plugin> {
-        self.plugins.get_mut(name).map(|p| p.as_mut() as &'a mut dyn Plugin)
+        self.plugins
+            .get_mut(name)
+            .map(|p| p.as_mut() as &'a mut dyn Plugin)
     }
 
     pub fn update(&mut self, world: &mut supernova_core::World, delta_time: f32) {
@@ -108,9 +114,9 @@ impl PluginManager {
                     let plugin = self.plugins.get(name.as_str()).unwrap();
                     plugin.dependencies()
                 };
-                let can_init = deps.iter().all(|dep| {
-                    initialized.iter().any(|s| s.as_str() == *dep)
-                });
+                let can_init = deps
+                    .iter()
+                    .all(|dep| initialized.iter().any(|s| s.as_str() == *dep));
 
                 if can_init {
                     if let Some(plugin_mut) = self.plugins.get_mut(name) {
@@ -182,7 +188,9 @@ struct DummyPlugin {
 
 impl DummyPlugin {
     fn new(name: &str) -> Self {
-        Self { name: name.to_string() }
+        Self {
+            name: name.to_string(),
+        }
     }
 }
 
