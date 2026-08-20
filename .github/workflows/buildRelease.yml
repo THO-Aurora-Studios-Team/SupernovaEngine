@@ -35,7 +35,7 @@ jobs:
           targets: ${{ matrix.platform.target }}
 
       - name: Build Engine Release
-        run: cargo build --release --target ${{ matrix.platform.target }}
+        run: cargo build --release --target ${{ matrix.platform.target }} --workspace
 
       # --- WINDOWS FULL UI INSTALLER GENERATION (NSIS) ---
       - name: Setup NSIS Compiler (Windows)
