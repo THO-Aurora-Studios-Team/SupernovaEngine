@@ -1,0 +1,16 @@
+[package]
+name = "supernova_plugin"
+version.workspace = true
+edition.workspace = true
+authors.workspace = true
+license.workspace = true
+description = "Dynamic plugin system for Supernova Engine"
+
+[dependencies]
+supernova_core = { workspace = true }
+parking_lot    = { workspace = true }
+log            = { workspace = true }
+thiserror      = { workspace = true }
+ahash          = { workspace = true }
+serde          = { workspace = true }
+serde_json     = { workspace = true }

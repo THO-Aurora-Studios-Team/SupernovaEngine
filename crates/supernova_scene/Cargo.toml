@@ -1,0 +1,13 @@
+[package]
+name = "supernova_scene"
+version.workspace = true
+edition.workspace = true
+authors.workspace = true
+license.workspace = true
+description = "Scene management for Supernova Engine"
+
+[dependencies]
+supernova_core = { workspace = true }
+supernova_math = { workspace = true }
+supernova_renderer = { workspace = true }
+serde          = { workspace = true }

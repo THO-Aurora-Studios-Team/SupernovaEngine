@@ -1,0 +1,12 @@
+[package]
+name = "supernova_math"
+version.workspace = true
+edition.workspace = true
+authors.workspace = true
+license.workspace = true
+description = "Math library for Supernova Engine"
+
+[dependencies]
+glam     = { workspace = true, features = ["serde"] }
+bytemuck = { workspace = true }
+serde    = { workspace = true }

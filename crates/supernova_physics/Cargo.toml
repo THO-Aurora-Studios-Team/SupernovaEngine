@@ -1,0 +1,15 @@
+[package]
+name = "supernova_physics"
+version.workspace = true
+edition.workspace = true
+authors.workspace = true
+license.workspace = true
+description = "Physics engine for Supernova Engine"
+
+[dependencies]
+supernova_math = { workspace = true }
+supernova_core = { workspace = true }
+parking_lot    = { workspace = true }
+log            = { workspace = true }
+rayon          = { workspace = true }
+serde          = { workspace = true }

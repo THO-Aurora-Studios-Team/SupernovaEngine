@@ -1,0 +1,20 @@
+[package]
+name = "supernova_renderer"
+version.workspace = true
+edition.workspace = true
+authors.workspace = true
+license.workspace = true
+description = "Rendering abstraction for Supernova Engine"
+
+[dependencies]
+supernova_math = { workspace = true }
+supernova_core = { workspace = true }
+wgpu           = { workspace = true }
+bytemuck       = { workspace = true }
+parking_lot    = { workspace = true }
+log            = { workspace = true }
+thiserror      = { workspace = true }
+image          = { workspace = true }
+ahash          = { workspace = true }
+bitflags       = { workspace = true }
+serde          = { workspace = true }

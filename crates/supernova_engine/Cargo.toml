@@ -1,0 +1,25 @@
+[package]
+name = "supernova_engine"
+version.workspace = true
+edition.workspace = true
+authors.workspace = true
+license.workspace = true
+description = "Supernova Engine — main engine crate"
+
+[dependencies]
+supernova_math     = { workspace = true }
+supernova_core     = { workspace = true }
+supernova_renderer = { workspace = true }
+supernova_physics  = { workspace = true }
+supernova_input    = { workspace = true }
+supernova_audio    = { workspace = true }
+supernova_scene    = { workspace = true }
+supernova_assets   = { workspace = true }
+supernova_network  = { workspace = true }
+supernova_scripting = { workspace = true }
+supernova_plugin   = { workspace = true }
+glam               = { workspace = true }
+log                = { workspace = true }
+parking_lot        = { workspace = true }
+serde              = { workspace = true }
+serde_json         = { workspace = true }

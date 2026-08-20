@@ -1,0 +1,18 @@
+[package]
+name = "supernova_core"
+version.workspace = true
+edition.workspace = true
+authors.workspace = true
+license.workspace = true
+description = "Core ECS and systems framework for Supernova Engine"
+
+[dependencies]
+supernova_math = { workspace = true }
+parking_lot    = { workspace = true }
+thiserror      = { workspace = true }
+log            = { workspace = true }
+ahash          = { workspace = true }
+nohash-hasher  = { workspace = true }
+indexmap       = { workspace = true }
+rayon          = { workspace = true }
+serde          = { workspace = true }

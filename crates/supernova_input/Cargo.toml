@@ -1,0 +1,13 @@
+[package]
+name = "supernova_input"
+version.workspace = true
+edition.workspace = true
+authors.workspace = true
+license.workspace = true
+description = "Input handling for Supernova Engine"
+
+[dependencies]
+supernova_core = { workspace = true }
+parking_lot    = { workspace = true }
+serde          = { workspace = true }
+ahash          = { workspace = true }

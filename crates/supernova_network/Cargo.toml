@@ -1,0 +1,17 @@
+[package]
+name = "supernova_network"
+version.workspace = true
+edition.workspace = true
+authors.workspace = true
+license.workspace = true
+description = "Networking stack for Supernova Engine"
+
+[dependencies]
+supernova_core = { workspace = true }
+supernova_math = { workspace = true }
+serde          = { workspace = true }
+parking_lot    = { workspace = true }
+log            = { workspace = true }
+thiserror      = { workspace = true }
+ahash          = { workspace = true }
+crossbeam-channel = { workspace = true }

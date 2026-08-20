@@ -1,0 +1,18 @@
+[package]
+name = "supernova_scripting"
+version.workspace = true
+edition.workspace = true
+authors.workspace = true
+license.workspace = true
+description = "Scripting system for Supernova Engine"
+
+[dependencies]
+supernova_core = { workspace = true }
+supernova_math = { workspace = true }
+mlua           = { workspace = true }
+parking_lot    = { workspace = true }
+log            = { workspace = true }
+thiserror      = { workspace = true }
+serde          = { workspace = true }
+serde_json     = { workspace = true }
+ahash          = { workspace = true }
