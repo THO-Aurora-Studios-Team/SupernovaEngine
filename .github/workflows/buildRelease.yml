@@ -43,7 +43,8 @@ jobs:
         shell: pwsh
         run: |
           choco install nsis -y
-          echo "C:\Program Files (x86)\NSIS" >> $GITHUB_PATH
+          # Properly append to GITHUB_PATH using UTF-8 encoding
+          "C:\Program Files (x86)\NSIS" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
 
       - name: Compile Windows Installer Wizard (.exe)
         if: matrix.platform.os == 'windows'
@@ -77,9 +78,15 @@ jobs:
             RMDir "`$INSTDIR"
           SectionEnd
           "@
-          Set-Content -Path "installer.nsi" -Value $nsisScript
+          
+          # Force UTF-8 encoding without BOM on the script generation
+          New-Item -Path "installer.nsi" -ItemType File -Value $nsisScript -Force
+          
+          # Execute compiler using the path you mapped to GITHUB_PATH
           makensis installer.nsi
-          echo "ASSET_PATH=SupernovaEngine-Setup-${{ github.ref_name }}-win-x86_64.exe" >> $env:GITHUB_ENV
+          
+          # Properly append your environment variable using UTF-8 encoding
+          "ASSET_PATH=SupernovaEngine-Setup-${{ github.ref_name }}-win-x86_64.exe" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
 
       # --- LINUX UI/DEBIAN INSTALLER GENERATION (.DEB) ---
       - name: Setup cargo-deb (Linux)
