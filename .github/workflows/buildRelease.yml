@@ -1,4 +1,4 @@
-name: Release UI Installers
+name: Release UI Installer Binaries
 
 on:
   push:
