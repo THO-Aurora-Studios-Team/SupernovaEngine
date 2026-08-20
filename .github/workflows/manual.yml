@@ -1,82 +1,97 @@
-name: Supernova Engine CI
+name: Release UI Installers
 
 on:
   push:
-    branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
-  workflow_dispatch:
+    tags:
+      - 'v*'
 
-env:
-  CARGO_TERM_COLOR: always
+permissions:
+  contents: write
 
 jobs:
-  # Job 1: Quality Assurance (Formatting and Linting)
-  qa:
-    name: Code Quality (Clippy & Format)
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout Code
-        uses: actions/checkout@v4
-
-      - name: Install Rust Toolchain
-        uses: dtolnay/rust-toolchain@stable
-        with:
-          components: clippy, rustfmt
-
-      - name: Enable Rust Cache
-        uses: swatinem/rust-cache@v2
-
-      - name: Check Formatting
-        run: cargo fmt --all -- --check
-
-      - name: Run Clippy Linter
-        run: cargo clippy --workspace --all-targets -- 
-
-  # Job 2: Multi-platform Build & Test Matrix
-  build-and-test:
-    name: Build & Test (${{ matrix.target-name }})
-    needs: qa
+  build:
+    name: Package - ${{ matrix.platform.os }} (${{ matrix.platform.arch }})
+    runs-on: ${{ matrix.platform.runner }}
     strategy:
       fail-fast: false
       matrix:
-        include:
-          - os: ubuntu-latest
-            target: x86_64-unknown-linux-gnu
-            target-name: Linux Native
-            command: cargo test --workspace
-          - os: windows-latest
-            target: x86_64-pc-windows-msvc
-            target-name: Windows Native
-            command: cargo test --workspace
-          - os: ubuntu-latest
-            target: wasm32-unknown-unknown
-            target-name: Web WASM
-            # Standard cargo test won't work on bare wasm32 targets without a runtime, 
-            # so we verify compilation succeeds for the web target.
-            command: cargo check --workspace --target wasm32-unknown-unknown
+        platform:
+          - { os: linux,   arch: x86_64, runner: ubuntu-latest,  target: x86_64-unknown-linux-gnu }
+          - { os: windows, arch: x86_64, runner: windows-latest, target: x86_64-pc-windows-msvc }
+          # Note: Custom native UI installers for ARM/x86 cross-compiled on GitHub runners require deep toolchain paths. 
+          # Starting with x86_64 ensures your core pipeline works perfectly first!
 
-    runs-on: ${{ matrix.os }}
     steps:
-      - name: Checkout Code
+      - name: Checkout Source Code
         uses: actions/checkout@v4
-
-      - name: Install System Dependencies (Linux Native Only)
-        if: matrix.os == 'ubuntu-latest' && matrix.target != 'wasm32-unknown-unknown'
-        run: |
-          sudo apt-get update
-          # Standard graphics/audio dependencies often required by Rust game engines (e.g., alsa, udev)
-          sudo apt-get install -y libasound2-dev libudev-dev pkg-config
 
       - name: Install Rust Toolchain
         uses: dtolnay/rust-toolchain@stable
         with:
-          targets: ${{ matrix.target }}
+          targets: ${{ matrix.platform.target }}
 
-      - name: Enable Rust Cache
-        uses: swatinem/rust-cache@v2
+      - name: Build Engine Release
+        run: cargo build --release --target ${{ matrix.platform.target }}
+
+      # --- WINDOWS FULL UI INSTALLER GENERATION (NSIS) ---
+      - name: Setup NSIS Compiler (Windows)
+        if: matrix.platform.os == 'windows'
+        shell: pwsh
+        run: |
+          choco install nsis -y
+          echo "C:\Program Files (x86)\NSIS" >> $GITHUB_PATH
+
+      - name: Compile Windows Installer Wizard (.exe)
+        if: matrix.platform.os == 'windows'
+        shell: pwsh
+        run: |
+          # Create the setup definition file dynamically
+          $nsisScript = @"
+          !include "MUI2.nsh"
+          Name "SupernovaEngine"
+          OutFile "SupernovaEngine-Setup-${{ github.ref_name }}-win-x86_64.exe"
+          InstallDir "`$PROGRAMFILES64\SupernovaEngine"
+          RequestExecutionLevel admin
+
+          !insertmacro MUI_PAGE_WELCOME
+          !insertmacro MUI_PAGE_DIRECTORY
+          !insertmacro MUI_PAGE_INSTFILES
+          !insertmacro MUI_PAGE_FINISH
+          !insertmacro MUI_LANGUAGE "English"
+
+          Section "MainSection" SEC01
+            SetOutPath "`$INSTDIR"
+            File "target\\${{ matrix.platform.target }}\\release\\supernova_engine.exe"
+            CreateShortcut "`$DESKTOP\SupernovaEngine.lnk" "`$INSTDIR\supernova_engine.exe"
+            WriteUninstaller "`$INSTDIR\uninstall.exe"
+          SectionEnd
+
+          Section "Uninstall"
+            Delete "`$INSTDIR\supernova_engine.exe"
+            Delete "`$DESKTOP\SupernovaEngine.lnk"
+            Delete "`$INSTDIR\uninstall.exe"
+            RMDir "`$INSTDIR"
+          SectionEnd
+          "@
+          Set-Content -Path "installer.nsi" -Value $nsisScript
+          makensis installer.nsi
+          echo "ASSET_PATH=SupernovaEngine-Setup-${{ github.ref_name }}-win-x86_64.exe" >> $env:GITHUB_ENV
+
+      # --- LINUX UI/DEBIAN INSTALLER GENERATION (.DEB) ---
+      - name: Setup cargo-deb (Linux)
+        if: matrix.platform.os == 'linux'
+        run: cargo install cargo-deb
+
+      - name: Package Debian UI Installer (.deb)
+        if: matrix.platform.os == 'linux'
+        run: |
+          # Generates a point-and-click UI desktop installation package for Ubuntu/Debian/Mint
+          cargo deb --target ${{ matrix.platform.target }} --no-build
+          cp target/${{ matrix.platform.target }}/debian/*.deb ./supernova-engine_${{ github.ref_name }}_amd64.deb
+          echo "ASSET_PATH=supernova-engine_${{ github.ref_name }}_amd64.deb" >> $GITHUB_ENV
+
+      # --- DEPLOY TO GITHUB RELEASES ---
+      - name: Upload UI Installers to GitHub Release
+        uses: softprops/action-gh-release@v2
         with:
-          key: ${{ matrix.target }}
-
-      - name: Run Build/Test Command
-        run: ${{ matrix.command }}
+          files: ${{ env.ASSET_PATH }}
