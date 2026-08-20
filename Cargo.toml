@@ -22,6 +22,7 @@ edition = "2021"
 authors = ["Aurora Studios"]
 license = "MIT OR Apache-2.0"
 description = "Supernova Engine — a next-generation, cross-platform game engine"
+name = "SupernovaEngine"
 
 [workspace.dependencies]
 # Internal crates
