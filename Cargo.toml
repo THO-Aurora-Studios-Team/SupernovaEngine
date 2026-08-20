@@ -83,6 +83,3 @@ description = "A cutting-edge modular engine supporting native and WASM builds."
 assets = [
     ["target/x86_64-unknown-linux-gnu/release/supernova_engine", "usr/bin/supernova_engine", "755"],
 ]
-
-[package]
-name = "SupernovaEngine"
