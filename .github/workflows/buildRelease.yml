@@ -53,12 +53,26 @@ jobs:
         shell: pwsh
         run: |
           choco install nsis -y
-          echo "C:\Program Files (x86)\NSIS" >> $GITHUB_PATH
+          if (Test-Path 'C:\Program Files (x86)\NSIS') {
+            echo "C:\Program Files (x86)\NSIS" >> $env:GITHUB_PATH
+          }
+          if (Test-Path 'C:\Program Files\NSIS') {
+            echo "C:\Program Files\NSIS" >> $env:GITHUB_PATH
+          }
 
       - name: Compile Windows Suite Installer (.exe)
         if: matrix.platform.os == 'windows'
         shell: pwsh
         run: |
+          # Resolve makensis regardless of PATH state on the runner.
+          $makensis = $null
+          foreach ($cand in @('C:\Program Files (x86)\NSIS\makensis.exe','C:\Program Files\NSIS\makensis.exe')) {
+            if (Test-Path $cand) { $makensis = $cand; break }
+          }
+          $cmd = Get-Command makensis -ErrorAction SilentlyContinue
+          if ($cmd) { $makensis = $cmd.Source }
+          if (-not $makensis) { throw 'makensis.exe not found' }
+
           $nsisScript = @"
           !include "MUI2.nsh"
 
@@ -112,7 +126,7 @@ jobs:
           SectionEnd
           "@
           Set-Content -Path "installer.nsi" -Value $nsisScript
-          makensis installer.nsi
+          & $makensis installer.nsi
           echo "ASSET_PATH=Supernova-Suite-${{ github.ref_name }}-win-x86_64.exe" >> $env:GITHUB_ENV
 
       # =====================================================================
@@ -122,7 +136,18 @@ jobs:
       - name: Package Debian Suite Installer (.deb)
         if: matrix.platform.os == 'linux'
         run: |
-          PKG_VERSION="${{ github.ref_name }}"
+          # Derive a Debian-compliant version (must start with a digit).
+          # Tag pushes: "v1.2.3" -> "1.2.3". Branch pushes (e.g. "main"):
+          # "0.0.0-main". Revisions may contain [A-Za-z0-9.+-].
+          REF="${{ github.ref_name }}"
+          RAW="${REF#v}"
+          if [[ "$RAW" =~ ^[0-9] ]]; then
+            PKG_VERSION="$RAW"
+          else
+            # Sanitize branch name into an acceptable revision string.
+            SANITIZED="$(echo "$RAW" | tr -c 'A-Za-z0-9.+-' '-')"
+            PKG_VERSION="0.0.0-${SANITIZED}"
+          fi
           PKG_DIR="supernova-suite_${PKG_VERSION}_amd64"
           BIN_DIR="target/${{ matrix.platform.target }}/release"
 
