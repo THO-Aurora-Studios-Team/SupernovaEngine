@@ -1,0 +1,15 @@
+{
+  "name": "ground",
+  "shader": "shaders/pbr.wgsl",
+  "albedo": [0.5, 0.42, 0.3, 1.0],
+  "metallic": 0.0,
+  "roughness": 0.85,
+  "emissive": [0.0, 0.0, 0.0],
+  "textures": {
+    "albedo": "textures/rock_albedo.png",
+    "normal": "textures/rock_normal.png",
+    "metallic_roughness": "textures/rock_roughness.png",
+    "occlusion": null,
+    "emissive": null
+  }
+}

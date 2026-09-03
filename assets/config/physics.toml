@@ -1,0 +1,12 @@
+# Supernova physics defaults.
+
+[world]
+gravity = [0.0, -9.81, 0.0]
+fixed_timestep = 0.0166667   # 60 Hz
+max_steps_per_frame = 4
+sleep_enabled = true
+
+[collision]
+broadphase = "sweep_and_prune"
+default_friction = 0.5
+default_restitution = 0.05

@@ -1,0 +1,12 @@
+{
+  "name": "player_idle",
+  "texture": "textures/player.png",
+  "pixels_per_unit": 16,
+  "frames": [
+    { "x": 0,  "y": 0, "w": 32, "h": 48 },
+    { "x": 32, "y": 0, "w": 32, "h": 48 },
+    { "x": 64, "y": 0, "w": 32, "h": 48 }
+  ],
+  "fps": 8,
+  "loop": true
+}

@@ -1,0 +1,9 @@
+Supernova Engine v0.1.0
+========================================
+Initializing engine...
+Supernova Engine initialized
+Engine initialized successfully.
+Starting main loop...
+Rendered 305 frames in 5 seconds
+Supernova Engine stopped
+Engine stopped. Goodbye!

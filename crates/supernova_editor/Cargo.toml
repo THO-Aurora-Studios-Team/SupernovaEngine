@@ -22,5 +22,11 @@ supernova_renderer = { workspace = true }
 supernova_scene    = { workspace = true }
 supernova_assets   = { workspace = true }
 egui               = { workspace = true }
+egui-wgpu          = { workspace = true }
 log                = { workspace = true }
 env_logger         = { workspace = true }
+winit              = { workspace = true }
+wgpu               = { workspace = true }
+crossbeam-channel  = { workspace = true }
+pollster           = { workspace = true }
+bytemuck           = { workspace = true }

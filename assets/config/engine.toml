@@ -1,0 +1,19 @@
+# Supernova Engine defaults — window configuration.
+
+[window]
+title = "Supernova Engine"
+width = 1280
+height = 720
+resizable = true
+vsync = true
+fullscreen = false
+
+[graphics]
+backend = "auto"          # auto | vulkan | dx12 | metal | gles3
+power_preference = "low"  # low (integrated GPU) | high (discrete GPU)
+max_fps = 144
+sample_count = 4          # MSAA samples (1, 2, 4, 8)
+
+[renderer]
+default_material = "materials/default.json"
+shadow_map_size = 2048

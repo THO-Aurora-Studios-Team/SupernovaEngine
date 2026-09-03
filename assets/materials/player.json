@@ -1,0 +1,15 @@
+{
+  "name": "player",
+  "shader": "shaders/pbr.wgsl",
+  "albedo": [0.12, 0.43, 0.92, 1.0],
+  "metallic": 0.1,
+  "roughness": 0.35,
+  "emissive": [0.0, 0.2, 0.6],
+  "textures": {
+    "albedo": "textures/player.png",
+    "normal": null,
+    "metallic_roughness": null,
+    "occlusion": null,
+    "emissive": null
+  }
+}

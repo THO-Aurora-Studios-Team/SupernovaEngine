@@ -1,0 +1,24 @@
+# Supernova audio mixer defaults.
+
+[mixer]
+master_volume = 1.0
+music_volume  = 0.8
+sfx_volume    = 1.0
+ui_volume     = 1.0
+
+[sample_rate]
+rate = 44100
+channels = 2
+
+[listener]
+default_rolloff = 1.0
+
+# Starter audio bank (relative to the assets root)
+[bank]
+bgm_loop   = "audio/bgm_loop.wav"
+sfx_jump   = "audio/jump.wav"
+sfx_coin   = "audio/coin.wav"
+sfx_damage = "audio/damage.wav"
+sfx_powerup = "audio/powerup.wav"
+sfx_click  = "audio/click.wav"
+sfx_hover  = "audio/ui_hover.wav"

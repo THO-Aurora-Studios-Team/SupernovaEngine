@@ -1,4 +1,4 @@
-name: Release UI Installer Binaries
+name: Release Suite Installer Binaries
 
 on:
   push:
@@ -22,7 +22,7 @@ jobs:
         platform:
           - { os: linux,   arch: x86_64, runner: ubuntu-latest,  target: x86_64-unknown-linux-gnu }
           - { os: windows, arch: x86_64, runner: windows-latest, target: x86_64-pc-windows-msvc }
-          # Note: Custom native UI installers for ARM/x86 cross-compiled on GitHub runners require deep toolchain paths. 
+          # Note: Custom native UI installers for ARM/x86 cross-compiled on GitHub runners require deep toolchain paths.
           # Starting with x86_64 ensures your core pipeline works perfectly first!
 
     steps:
@@ -34,10 +34,20 @@ jobs:
         with:
           targets: ${{ matrix.platform.target }}
 
-      - name: Build Engine Release
+      - name: Build All Crates Release
         run: cargo build --release --target ${{ matrix.platform.target }}
 
-      # --- WINDOWS FULL UI INSTALLER GENERATION (NSIS) ---
+      - name: Show Build Artifacts
+        shell: pwsh
+        run: |
+          $binDir = "target/${{ matrix.platform.target }}/release"
+          Get-ChildItem $binDir -File | Where-Object { $_.Extension -in '.exe','' } |
+            Select-Object Name, Length | Format-Table -AutoSize
+
+      # =====================================================================
+      #  WINDOWS FULL SUITE INSTALLER  (NSIS)
+      #  Includes: supernova_engine.exe, supernova-editor.exe, and assets/
+      # =====================================================================
       - name: Setup NSIS Compiler (Windows)
         if: matrix.platform.os == 'windows'
         shell: pwsh
@@ -45,16 +55,16 @@ jobs:
           choco install nsis -y
           echo "C:\Program Files (x86)\NSIS" >> $GITHUB_PATH
 
-      - name: Compile Windows Installer Wizard (.exe)
+      - name: Compile Windows Suite Installer (.exe)
         if: matrix.platform.os == 'windows'
         shell: pwsh
         run: |
-          # Create the setup definition file dynamically
           $nsisScript = @"
           !include "MUI2.nsh"
-          Name "SupernovaEngine"
-          OutFile "SupernovaEngine-Setup-${{ github.ref_name }}-win-x86_64.exe"
-          InstallDir "`$PROGRAMFILES64\SupernovaEngine"
+
+          Name "Supernova Suite"
+          OutFile "Supernova-Suite-${{ github.ref_name }}-win-x86_64.exe"
+          InstallDir "`$PROGRAMFILES64\Supernova"
           RequestExecutionLevel admin
 
           !insertmacro MUI_PAGE_WELCOME
@@ -63,39 +73,99 @@ jobs:
           !insertmacro MUI_PAGE_FINISH
           !insertmacro MUI_LANGUAGE "English"
 
-          Section "MainSection" SEC01
+          # ---------- Engine ----------
+          Section "Supernova Engine" SEC_ENGINE
+            SectionIn RO
             SetOutPath "`$INSTDIR"
             File "target\\${{ matrix.platform.target }}\\release\\supernova_engine.exe"
-            CreateShortcut "`$DESKTOP\SupernovaEngine.lnk" "`$INSTDIR\supernova_engine.exe"
-            WriteUninstaller "`$INSTDIR\uninstall.exe"
+            CreateShortcut "`$DESKTOP\Supernova Engine.lnk" "`$INSTDIR\supernova_engine.exe"
+            CreateShortcut "`$SMPROGRAMS\Supernova Engine.lnk" "`$INSTDIR\supernova_engine.exe"
           SectionEnd
 
+          # ---------- Editor ----------
+          Section "Supernova Editor" SEC_EDITOR
+            SectionIn RO
+            SetOutPath "`$INSTDIR"
+            File "target\\${{ matrix.platform.target }}\\release\\supernova-editor.exe"
+            CreateShortcut "`$DESKTOP\Supernova Editor.lnk" "`$INSTDIR\supernova-editor.exe"
+            CreateShortcut "`$SMPROGRAMS\Supernova Editor.lnk" "`$INSTDIR\supernova-editor.exe"
+          SectionEnd
+
+          # ---------- Starter Assets ----------
+          Section "Starter Assets" SEC_ASSETS
+            SectionIn RO
+            SetOutPath "`$INSTDIR\assets"
+            File /r "assets\*.*"
+          SectionEnd
+
+          # ---------- Uninstaller ----------
           Section "Uninstall"
             Delete "`$INSTDIR\supernova_engine.exe"
-            Delete "`$DESKTOP\SupernovaEngine.lnk"
+            Delete "`$INSTDIR\supernova-editor.exe"
+            Delete "`$DESKTOP\Supernova Engine.lnk"
+            Delete "`$DESKTOP\Supernova Editor.lnk"
+            Delete "`$SMPROGRAMS\Supernova Engine.lnk"
+            Delete "`$SMPROGRAMS\Supernova Editor.lnk"
+            RMDir /r "`$INSTDIR\assets"
             Delete "`$INSTDIR\uninstall.exe"
             RMDir "`$INSTDIR"
           SectionEnd
           "@
           Set-Content -Path "installer.nsi" -Value $nsisScript
           makensis installer.nsi
-          echo "ASSET_PATH=SupernovaEngine-Setup-${{ github.ref_name }}-win-x86_64.exe" >> $env:GITHUB_ENV
+          echo "ASSET_PATH=Supernova-Suite-${{ github.ref_name }}-win-x86_64.exe" >> $env:GITHUB_ENV
 
-      # --- LINUX UI/DEBIAN INSTALLER GENERATION (.DEB) ---
-      - name: Setup cargo-deb (Linux)
-        if: matrix.platform.os == 'linux'
-        run: cargo install cargo-deb
-
-      - name: Package Debian UI Installer (.deb)
+      # =====================================================================
+      #  LINUX FULL SUITE INSTALLER  (handcrafted .deb)
+      #  Includes: supernova-engine, supernova-editor, and shared assets
+      # =====================================================================
+      - name: Package Debian Suite Installer (.deb)
         if: matrix.platform.os == 'linux'
         run: |
-          # Generates a point-and-click UI desktop installation package for Ubuntu/Debian/Mint
-          cargo deb --target ${{ matrix.platform.target }} --no-build
-          cp target/${{ matrix.platform.target }}/debian/*.deb ./supernova-engine_${{ github.ref_name }}_amd64.deb
-          echo "ASSET_PATH=supernova-engine_${{ github.ref_name }}_amd64.deb" >> $GITHUB_ENV
+          PKG_VERSION="${{ github.ref_name }}"
+          PKG_DIR="supernova-suite_${PKG_VERSION}_amd64"
+          BIN_DIR="target/${{ matrix.platform.target }}/release"
 
-      # --- DEPLOY TO GITHUB RELEASES ---
-      - name: Upload UI Installers to GitHub Release
+          # --- Package tree layout ---
+          mkdir -p "${PKG_DIR}/DEBIAN"
+          mkdir -p "${PKG_DIR}/usr/bin"
+          mkdir -p "${PKG_DIR}/usr/share/supernova/assets"
+
+          # --- Binaries ---
+          cp "${BIN_DIR}/supernova_engine" "${PKG_DIR}/usr/bin/supernova-engine"
+          chmod 755 "${PKG_DIR}/usr/bin/supernova-engine"
+          cp "${BIN_DIR}/supernova-editor" "${PKG_DIR}/usr/bin/supernova-editor"
+          chmod 755 "${PKG_DIR}/usr/bin/supernova-editor"
+
+          # --- Assets (preserving directory structure) ---
+          cp -r assets/* "${PKG_DIR}/usr/share/supernova/assets/"
+
+          # --- Compute installed size (KB) from populated tree ---
+          INSTALLED_KB=$(find "${PKG_DIR}" -type f -exec stat --format=%s {} + | awk '{s+=$1} END {printf "%d", s/1024}')
+
+          # --- Control file (no leading whitespace — dpkg requires it) ---
+          echo "Package: supernova-suite" > "${PKG_DIR}/DEBIAN/control"
+          echo "Version: ${PKG_VERSION}" >> "${PKG_DIR}/DEBIAN/control"
+          echo "Architecture: amd64" >> "${PKG_DIR}/DEBIAN/control"
+          echo "Maintainer: Supernova Team <noreply@example.com>" >> "${PKG_DIR}/DEBIAN/control"
+          echo "Description: Supernova Game Engine, Editor, and Starter Assets" >> "${PKG_DIR}/DEBIAN/control"
+          echo " Installs the Supernova rendering engine, the full-featured" >> "${PKG_DIR}/DEBIAN/control"
+          echo " egui-based editor, and a starter asset pack (textures, shaders," >> "${PKG_DIR}/DEBIAN/control"
+          echo " scenes, audio, configs, and sprites)." >> "${PKG_DIR}/DEBIAN/control"
+          echo "Depends: libwayland-client0, libxkbcommon0, libvulkan1" >> "${PKG_DIR}/DEBIAN/control"
+          echo "Section: games" >> "${PKG_DIR}/DEBIAN/control"
+          echo "Priority: optional" >> "${PKG_DIR}/DEBIAN/control"
+          echo "Installed-Size: ${INSTALLED_KB}" >> "${PKG_DIR}/DEBIAN/control"
+
+          # --- Build .deb ---
+          dpkg-deb --root-owner-group --build "${PKG_DIR}"
+          mv "${PKG_DIR}.deb" "supernova-suite_${PKG_VERSION}_amd64.deb"
+          echo "ASSET_PATH=supernova-suite_${PKG_VERSION}_amd64.deb" >> $GITHUB_ENV
+
+      # =====================================================================
+      #  DEPLOY TO GITHUB RELEASES
+      # =====================================================================
+      - name: Upload Suite Installer to GitHub Release
         uses: softprops/action-gh-release@v2
         with:
           files: ${{ env.ASSET_PATH }}

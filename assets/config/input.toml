@@ -1,0 +1,20 @@
+# Supernova input mapping defaults.
+
+[action_map]
+move_forward = ["KeyW", "ArrowUp"]
+move_back    = ["KeyS", "ArrowDown"]
+move_left    = ["KeyA", "ArrowLeft"]
+move_right   = ["KeyD", "ArrowRight"]
+jump         = ["Space"]
+sprint       = ["ShiftLeft"]
+crouch       = ["KeyC"]
+interact     = ["KeyE"]
+pause        = ["Escape"]
+
+[axis]
+look_x = "MouseDeltaX"
+look_y = "MouseDeltaY"
+
+[mouse]
+sensitivity = 0.002
+invert_y = false

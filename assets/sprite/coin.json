@@ -1,0 +1,13 @@
+{
+  "name": "coin",
+  "texture": "textures/coin.png",
+  "pixels_per_unit": 16,
+  "frames": [
+    { "x": 0,  "y": 0, "w": 16, "h": 16 },
+    { "x": 16, "y": 0, "w": 16, "h": 16 },
+    { "x": 32, "y": 0, "w": 16, "h": 16 },
+    { "x": 48, "y": 0, "w": 16, "h": 16 }
+  ],
+  "fps": 12,
+  "loop": true
+}

@@ -1,0 +1,15 @@
+{
+  "name": "brick",
+  "shader": "shaders/pbr.wgsl",
+  "albedo": [0.65, 0.3, 0.24, 1.0],
+  "metallic": 0.0,
+  "roughness": 0.75,
+  "emissive": [0.0, 0.0, 0.0],
+  "textures": {
+    "albedo": "textures/brick.png",
+    "normal": null,
+    "metallic_roughness": "textures/rock_roughness.png",
+    "occlusion": null,
+    "emissive": null
+  }
+}

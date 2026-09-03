@@ -1,0 +1,19 @@
+{
+  "$schema": "supernova/scene",
+  "name": "empty_world",
+  "entities": [
+    { "name": "Ground", "tag": "ground", "transform": { "translation": [0.0, -0.5, 0.0], "rotation": [0, 0, 0, 1], "scale": [20, 1, 20] }, "material": "materials/grass.json" },
+    { "name": "Wall A", "tag": "prop",   "transform": { "translation": [10.0, 2.0, 0.0], "rotation": [0, 0, 0, 1], "scale": [0.5, 4, 10] }, "material": "materials/brick.json" },
+    { "name": "Wall B", "tag": "prop",   "transform": { "translation": [-10.0, 2.0, 0.0], "rotation": [0, 0, 0, 1], "scale": [0.5, 4, 10] }, "material": "materials/brick.json" },
+    { "name": "Sun",    "tag": "light",  "transform": { "translation": [0.0, 0.0, 0.0], "rotation": [0, 0, 0, 1], "scale": [1, 1, 1] }, "light": { "type": "directional", "color": [1.0, 0.96, 0.9], "direction": [0.5, -1.0, 0.3], "intensity": 1.0 } }
+  ],
+  "materials": ["materials/ground.json", "materials/grass.json", "materials/brick.json", "materials/default.json"],
+  "lights": [
+    { "type": "directional", "color": [1.0, 0.96, 0.9], "direction": [0.5, -1.0, 0.3], "intensity": 1.0 }
+  ],
+  "cameras": [
+    { "name": "MainCamera", "fov_y_degrees": 60.0, "near": 0.1, "far": 500.0, "position": [0.0, 2.0, 6.0], "look_at": [0.0, 0.0, 0.0] }
+  ],
+  "skybox": "textures/sky_gradient.png",
+  "ambient": { "color": [0.18, 0.18, 0.22], "intensity": 0.4 }
+}
